@@ -56,7 +56,7 @@ class _XDOuvertureState extends State<XDOuverture> {
                 Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: const AssetImage('assets/images/logoforeste.jpeg'),
+                  image: const AssetImage('assets/images/logoforeste-bg.png'),
                   fit: BoxFit.fill,
                 ),
               ),

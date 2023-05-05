@@ -4,6 +4,7 @@ import 'package:adobe_xd/pinned.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:mywashcard/x_dcard_pagenew1.dart';
 import 'package:mywashcard/xd_profil.dart';
+import 'package:mywashcard/xd_solde.dart';
 import './xd_champ_ville.dart';
 import './xd_champ_quartier.dart';
 import './xd_bouton_recherche.dart';
@@ -12,6 +13,7 @@ import 'package:adobe_xd/page_link.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import './xd_presentation.dart';
 import './constants.dart';
+import 'recherche_group.dart';
 
 class XDAcceuil extends StatefulWidget {
   XDAcceuil({
@@ -38,7 +40,7 @@ class _XDAcceuilState extends State<XDAcceuil> {
             child: Stack(
               children: <Widget>[
                 Container(
-                  decoration: const BoxDecoration(
+                  decoration:  BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment(0.0, 1.036),
                       end: Alignment(0.0, -0.547),
@@ -52,11 +54,12 @@ class _XDAcceuilState extends State<XDAcceuil> {
                 ),
                 // Adobe XD layer: 'erik-mclean-iFq8Q3i…' (shape)
                 Container(
+                  constraints: BoxConstraints(minHeight: 50.h, maxWidth: 100.w),
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: const AssetImage('assets/images/erik-mclean.jpg'),
                       fit: BoxFit.cover,
-                      colorFilter: new ColorFilter.mode(
+                      colorFilter: ColorFilter.mode(
                           Colors.black.withOpacity(0.3), BlendMode.dstIn),
                     ),
                   ),
@@ -102,44 +105,45 @@ class _XDAcceuilState extends State<XDAcceuil> {
                   bottomLeft: Radius.circular(25.0),
                 ),
               ),
+              child: XDSolde(),
             ),
           ),
           Container(),
-          Pinned.fromPins(
-            Pin(start: 10.w, end: 10.w),
-            Pin(size: 5.h, start: 6.h),
-            child: FutureBuilder(
-              future: _fetch(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState != ConnectionState.done)
-                  return Text("Chargement...", textAlign: TextAlign.center);
-                return Text(
-                  "${mySolde} FCFA",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 25.dp,
-                    color: const Color(0xffffffff),
-                  ),
-                );
-              },
-            ),
-          ),
-          Pinned.fromPins(
-            Pin(size: 40.w, middle: 0.5014),
-            Pin(size: 4.h, start: 4.h),
-            child: Text(
-              'SOLDE',
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 10.dp,
-                color: const Color(0xffffffff),
-                fontWeight: FontWeight.w300,
-              ),
-              textAlign: TextAlign.center,
-              softWrap: false,
-            ),
-          ),
+          // Pinned.fromPins(
+          //   Pin(start: 10.w, end: 10.w),
+          //   Pin(size: 5.h, start: 6.h),
+          //   child: FutureBuilder(
+          //     future: _fetch(),
+          //     builder: (context, snapshot) {
+          //       if (snapshot.connectionState != ConnectionState.done)
+          //         return Text("Chargement...", textAlign: TextAlign.center);
+          //       return Text(
+          //         "${mySolde} FCFA",
+          //         textAlign: TextAlign.center,
+          //         style: TextStyle(
+          //           fontFamily: 'Montserrat',
+          //           fontSize: 25.dp,
+          //           color: const Color(0xffffffff),
+          //         ),
+          //       );
+          //     },
+          //   ),
+          // ),
+          // Pinned.fromPins(
+          //   Pin(size: 40.w, middle: 0.5014),
+          //   Pin(size: 4.h, start: 4.h),
+          //   child: Text(
+          //     'SOLDE',
+          //     style: TextStyle(
+          //       fontFamily: 'Montserrat',
+          //       fontSize: 10.dp,
+          //       color: const Color(0xffffffff),
+          //       fontWeight: FontWeight.w300,
+          //     ),
+          //     textAlign: TextAlign.center,
+          //     softWrap: false,
+          //   ),
+          // ),
           Pinned.fromPins(
             Pin(start: 5.w, end: 5.w),
             Pin(size: 10.h, middle: 0.1565),
@@ -154,60 +158,7 @@ class _XDAcceuilState extends State<XDAcceuil> {
               textAlign: TextAlign.center,
             ),
           ),
-          Pinned.fromPins(
-            Pin(start: 7.w, end: 7.w),
-            Pin(size: 23.h, middle: 0.3),
-            child:
-                // Adobe XD layer: 'Recherche' (group)
-                Stack(
-              children: <Widget>[
-                Container(
-                  decoration: BoxDecoration(
-                    color: const Color(0xfffcfcfc),
-                    borderRadius: BorderRadius.circular(5.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0x29000000),
-                        offset: Offset(0, 0),
-                        blurRadius: 10,
-                      ),
-                    ],
-                  ),
-                ),
-                Pinned.fromPins(
-                  Pin(size: 195.0, start: 17.0),
-                  Pin(size: 47.0, start: 20.0),
-                  child:
-                      // Adobe XD layer: 'Champ ville' (component)
-                      XDChampVille(),
-                ),
-                Pinned.fromPins(
-                  Pin(size: 195.0, start: 17.0),
-                  Pin(size: 47.0, end: 19.0),
-                  child:
-                      // Adobe XD layer: 'Champ quartier' (component)
-                      XDChampQuartier(),
-                ),
-                Pinned.fromPins(
-                  Pin(size: 65.0, end: 17.0),
-                  Pin(start: 31.0, end: 32.0),
-                  child:
-                      // Adobe XD layer: 'Bouton recherche' (component)
-                      PageLink(
-                    links: [
-                      PageLinkInfo(
-                        transition: LinkTransition.Fade,
-                        ease: Curves.easeOut,
-                        duration: 0.3,
-                        pageBuilder: () => XDResultatRecherche(),
-                      ),
-                    ],
-                    child: XDBoutonRecherche(),
-                  ),
-                ),
-              ],
-            ),
-          ),
+      
         ],
       ),
       floatingActionButton: Container(
@@ -219,7 +170,7 @@ class _XDAcceuilState extends State<XDAcceuil> {
 
             onPressed: () {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => XDAcceuil()));
+                  MaterialPageRoute(builder: (context) => XDResultatRecherche()));
             },
             child: Icon(
               Icons.location_on,
@@ -229,7 +180,7 @@ class _XDAcceuilState extends State<XDAcceuil> {
           ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: BottomAppBar(
         color: Color.fromARGB(255, 255, 255, 255),
 
@@ -261,6 +212,15 @@ class _XDAcceuilState extends State<XDAcceuil> {
                 onPressed: () {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (contet) => XDProfil()));
+                },
+              ),
+                IconButton(
+                iconSize: 30.0,
+                padding: EdgeInsets.only(right: 28.0),
+                icon: Icon(Icons.home),
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (contet) => XDAcceuil()));
                 },
               ),
               IconButton(
@@ -297,23 +257,25 @@ class _XDAcceuilState extends State<XDAcceuil> {
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20.0)),
             child: Container(
-              constraints: BoxConstraints(maxHeight: 25.h, maxWidth: 65.w),
+              constraints: BoxConstraints(maxHeight: 30.h, maxWidth: 75.w),
               child: Padding(
-                padding: const EdgeInsets.all(12.0),
+                padding:  EdgeInsets.all(2.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                     SizedBox(height: 10,),
                     Text(
                       "NOUS SOMMES OUVERT 24/24h 7/7j",
                       style: TextStyle(color: Color(0xffe1bd07)),
                     ),
+                    SizedBox(height: 10,),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
                         children: [
                           Icon(Icons.mail),
                           SizedBox(width: 10.0),
-                          Text("infos@mywashcard.com"),
+                          Text("infos@mywashcards.com"),
                         ],
                       ),
                     ),
@@ -345,28 +307,6 @@ class _XDAcceuilState extends State<XDAcceuil> {
         });
   }
 
-  _fetch() async {
-    try {
-      final firebaseUser = await FirebaseAuth.instance.currentUser;
-      if (firebaseUser != null) {
-        final ds = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(firebaseUser.uid)
-            .get();
-        if (ds.exists) {
-          final solde = ds.data()!['Solde'];
-          if (solde != null) {
-            mySolde = double.tryParse(solde.toString()) ?? 0;
-            print(mySolde);
-          } else {
-            print('The value for the "Solde" field is null.');
-          }
-        } else {
-          print('The document does not exist.');
-        }
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
+ 
+  
 }

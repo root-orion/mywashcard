@@ -4,6 +4,8 @@
         android:label="mywashcard"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
+        <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyCWN0kudmzc3I0J7J00Yp5OG4CLJ2V6ydY"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

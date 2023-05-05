@@ -3,7 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:adobe_xd/pinned.dart';
 import 'package:mywashcard/x_dcard_pagenew1.dart';
-import './xd_bouton_lavage.dart';
+import 'package:mywashcard/xd_resultat_recherche.dart';
+import 'package:mywashcard/xd_solde.dart';
+
 import './xd_acceuil.dart';
 import 'package:adobe_xd/page_link.dart';
 import './xd_presentation.dart';
@@ -12,6 +14,8 @@ import './xd_vhicules.dart';
 import './xd_mot_de_passe.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
+
+import 'under_construct.dart';
 
 class XDProfil extends StatefulWidget {
   XDProfil({
@@ -38,13 +42,13 @@ class _XDProfilState extends State<XDProfil> {
             child: Stack(
               children: <Widget>[
                 Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment(0.0, 1.036),
                       end: Alignment(0.0, -0.547),
                       colors: [
-                        const Color(0xff000000),
-                        const Color(0xffcbcbcb)
+                        Color(0xff000000),
+                        Color(0xffcbcbcb)
                       ],
                       stops: [0.0, 1.0],
                     ),
@@ -56,7 +60,7 @@ class _XDProfilState extends State<XDProfil> {
                     image: DecorationImage(
                       image: const AssetImage('assets/images/erik-mclean.jpg'),
                       fit: BoxFit.cover,
-                      colorFilter: new ColorFilter.mode(
+                      colorFilter: ColorFilter.mode(
                           Colors.black.withOpacity(0.3), BlendMode.dstIn),
                     ),
                   ),
@@ -66,8 +70,8 @@ class _XDProfilState extends State<XDProfil> {
             ),
           ),
           Container(
-            decoration: BoxDecoration(
-              color: const Color(0xffffffff),
+            decoration: const BoxDecoration(
+              color: Color(0xffffffff),
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(28.0),
                 topRight: Radius.circular(28.0),
@@ -85,7 +89,7 @@ class _XDProfilState extends State<XDProfil> {
                 image: DecorationImage(
                   image: const AssetImage('assets/images/Logo.png'),
                   fit: BoxFit.fill,
-                  colorFilter: new ColorFilter.mode(
+                  colorFilter: ColorFilter.mode(
                       Colors.black.withOpacity(0.2), BlendMode.dstIn),
                 ),
               ),
@@ -95,51 +99,19 @@ class _XDProfilState extends State<XDProfil> {
             Pin(start: 0.0, end: 0.0),
             Pin(size: 80.0, start: 0.0),
             child: Container(
-              decoration: BoxDecoration(
-                color: const Color(0xffe1bd07),
+              decoration: const BoxDecoration(
+                color:  Color(0xffe1bd07),
                 borderRadius: BorderRadius.only(
                   bottomRight: Radius.circular(25.0),
                   bottomLeft: Radius.circular(25.0),
                 ),
+               
               ),
+               child:XDSolde(),
             ),
           ),
           Container(),
-          Pinned.fromPins(
-            Pin(start: 95.0, end: 95.0),
-            Pin(size: 34.0, start: 30.0),
-            child: FutureBuilder(
-              future: _fetch(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState != ConnectionState.done)
-                  return Text("Chargement...", textAlign: TextAlign.center);
-                return Text(
-                  "${mySolde} + ${myPrenoms} FCFA",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 25.dp,
-                    color: const Color(0xffffffff),
-                  ),
-                );
-              },
-            ),
-          ),
-          Pinned.fromPins(
-            Pin(size: 42.0, middle: 0.5014),
-            Pin(size: 15.0, start: 17.0),
-            child: Text(
-              'SOLDE',
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 12,
-                color: const Color(0xffffffff),
-                fontWeight: FontWeight.w300,
-              ),
-              textAlign: TextAlign.center,
-              softWrap: false,
-            ),
-          ),
+    
           Pinned.fromPins(
             Pin(start: 27.0, end: 26.0),
             Pin(size: 40.0, middle: 0.1667),
@@ -223,7 +195,7 @@ class _XDProfilState extends State<XDProfil> {
                         Stack(
                       children: <Widget>[
                         Pinned.fromPins(
-                          Pin(size: 62.0, start: 6.5),
+                          Pin(size:20.w, start: 2.w),
                           Pin(size: 16.0, end: 0.0),
                           child:
                               // Adobe XD layer: 'Group 7' (group)
@@ -231,14 +203,14 @@ class _XDProfilState extends State<XDProfil> {
                             children: <Widget>[
                               Pinned.fromPins(
                                 Pin(startFraction: 0.0, endFraction: 0.0),
-                                Pin(size: 16.0, middle: 0.5),
+                                Pin(size: 3.h, middle: 0),
                                 child:
                                     // Adobe XD layer: 'New Delhi' (text)
                                     Text(
                                   '06-11-2021',
                                   style: TextStyle(
                                     fontFamily: 'Montserrat',
-                                    fontSize: 13,
+                                    fontSize: 13.dp,
                                     color: const Color(0xffe1bd07),
                                     letterSpacing: -0.1291004056930542,
                                   ),
@@ -261,7 +233,7 @@ class _XDProfilState extends State<XDProfil> {
                                 Pin(size: 13.0, middle: 0.5),
                                 child:
                                     // Adobe XD layer: 'New Delhi' (text)
-                                    Text(
+                                    const Text(
                                   'Membre depuis',
                                   style: TextStyle(
                                     fontFamily: 'Montserrat',
@@ -281,7 +253,7 @@ class _XDProfilState extends State<XDProfil> {
                           child:
                               // Adobe XD layer: 'From' (text)
                               Text(
-                            '${myName} ',
+                            '${myName} ${myPrenoms}'.toUpperCase(),
                             style: TextStyle(
                               fontFamily: 'Montserrat',
                               fontSize: 15,
@@ -315,7 +287,7 @@ class _XDProfilState extends State<XDProfil> {
                               transition: LinkTransition.Fade,
                               ease: Curves.linear,
                               duration: 0.3,
-                              pageBuilder: () => XDInformationsPersonnelle(),
+                              pageBuilder: () => UnderConstruct(),
                             ),
                           ],
                           child: Stack(
@@ -323,7 +295,7 @@ class _XDProfilState extends State<XDProfil> {
                               Pinned.fromPins(
                                 Pin(size: 250.0, start: 0.0),
                                 Pin(start: 2.0, end: 3.0),
-                                child: Text(
+                                child:const  Text(
                                   'INFORMATIONS PERSONELLES',
                                   style: TextStyle(
                                     fontFamily: 'Montserrat',
@@ -337,12 +309,12 @@ class _XDProfilState extends State<XDProfil> {
                               Pinned.fromPins(
                                 Pin(size: 12.0, end: 0.0),
                                 Pin(start: 0.0, end: 0.0),
-                                child: Text(
+                                child: const Text(
                                   '>',
                                   style: TextStyle(
                                     fontFamily: 'Montserrat',
                                     fontSize: 20,
-                                    color: const Color(0xffe1bd07),
+                                    color:  Color(0xffe1bd07),
                                     letterSpacing: -0.17213386535644531,
                                   ),
                                   softWrap: false,
@@ -363,7 +335,7 @@ class _XDProfilState extends State<XDProfil> {
                               transition: LinkTransition.Fade,
                               ease: Curves.linear,
                               duration: 0.3,
-                              pageBuilder: () => XDVhicules(),
+                              pageBuilder: () => UnderConstruct(),
                             ),
                           ],
                           child: Stack(
@@ -371,12 +343,12 @@ class _XDProfilState extends State<XDProfil> {
                               Pinned.fromPins(
                                 Pin(size: 92.0, start: 0.0),
                                 Pin(size: 19.0, end: 1.0),
-                                child: Text(
+                                child: const Text(
                                   'VEHICULES',
                                   style: TextStyle(
                                     fontFamily: 'Montserrat',
                                     fontSize: 16,
-                                    color: const Color(0xffe1bd07),
+                                    color:  Color(0xffe1bd07),
                                     letterSpacing: -0.13770709228515626,
                                   ),
                                   softWrap: false,
@@ -385,12 +357,12 @@ class _XDProfilState extends State<XDProfil> {
                               Pinned.fromPins(
                                 Pin(size: 12.0, end: 0.0),
                                 Pin(start: 0.0, end: 0.0),
-                                child: Text(
+                                child: const Text(
                                   '>',
                                   style: TextStyle(
                                     fontFamily: 'Montserrat',
                                     fontSize: 20,
-                                    color: const Color(0xffe1bd07),
+                                    color:  Color(0xffe1bd07),
                                     letterSpacing: -0.17213386535644531,
                                   ),
                                   softWrap: false,
@@ -411,7 +383,7 @@ class _XDProfilState extends State<XDProfil> {
                               transition: LinkTransition.Fade,
                               ease: Curves.linear,
                               duration: 0.3,
-                              pageBuilder: () => XDMotDePasse(),
+                              pageBuilder: () => UnderConstruct(),
                             ),
                           ],
                           child: Stack(
@@ -419,12 +391,12 @@ class _XDProfilState extends State<XDProfil> {
                               Pinned.fromPins(
                                 Pin(start: 0.0, end: 25.0),
                                 Pin(size: 19.0, end: 1.0),
-                                child: Text(
+                                child: const Text(
                                   'MODIFIACTION DE MOT DE PASSE',
                                   style: TextStyle(
                                     fontFamily: 'Montserrat',
                                     fontSize: 16,
-                                    color: const Color(0xffe1bd07),
+                                    color: Color(0xffe1bd07),
                                     letterSpacing: -0.13770709228515626,
                                   ),
                                   softWrap: false,
@@ -433,12 +405,12 @@ class _XDProfilState extends State<XDProfil> {
                               Pinned.fromPins(
                                 Pin(size: 12.0, end: 0.0),
                                 Pin(start: 0.0, end: 0.0),
-                                child: Text(
+                                child: const Text(
                                   '>',
                                   style: TextStyle(
                                     fontFamily: 'Montserrat',
                                     fontSize: 20,
-                                    color: const Color(0xffe1bd07),
+                                    color:  Color(0xffe1bd07),
                                     letterSpacing: -0.17213386535644531,
                                   ),
                                   softWrap: false,
@@ -452,21 +424,21 @@ class _XDProfilState extends State<XDProfil> {
                   ),
                 ),
                 Pinned.fromPins(
-                  Pin(size: 83.0, start: 20.5),
-                  Pin(size: 100.0, start: 27.0),
+                  Pin(size: 18.w, start: 5.w),
+                  Pin(size: 12.h, start: 5.h),
                   child:
                       // Adobe XD layer: 'default_pp' (shape)
                       Container(
-                        constraints: BoxConstraints(maxHeight: 5.h,maxWidth: 20.w),
-                    decoration: BoxDecoration(
+                        constraints: BoxConstraints(maxHeight: 4.h,maxWidth: 20.w),
+                    decoration: const BoxDecoration(
                       image: DecorationImage(
-                        image: const AssetImage('assets/images/utilisateur.png'),
+                        image: AssetImage('assets/images/user.png'),
                         fit: BoxFit.fill,
                       ),
                     ),
                   ),
                 ),
-              ],
+              ],  
             ),
           ),
         ],
@@ -476,13 +448,13 @@ class _XDProfilState extends State<XDProfil> {
         width: 65.0,
         child: FittedBox(
           child: FloatingActionButton(
-            backgroundColor: Color(0xffe1bd07),
+            backgroundColor: const Color(0xffe1bd07),
 
             onPressed: () {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => XDAcceuil()));
+                  MaterialPageRoute(builder: (context) => XDResultatRecherche()));
             },
-            child: Icon(
+            child: const Icon(
               Icons.location_on,
               color: Colors.white,
             ),
@@ -490,7 +462,7 @@ class _XDProfilState extends State<XDProfil> {
           ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+     floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: BottomAppBar(
         color: Color.fromARGB(255, 255, 255, 255),
 
@@ -522,6 +494,15 @@ class _XDProfilState extends State<XDProfil> {
                 onPressed: () {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (contet) => XDProfil()));
+                },
+              ),
+                IconButton(
+                iconSize: 30.0,
+                padding: EdgeInsets.only(right: 28.0),
+                icon: Icon(Icons.home),
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (contet) => XDAcceuil()));
                 },
               ),
               IconButton(
@@ -606,31 +587,7 @@ class _XDProfilState extends State<XDProfil> {
         });
   }
 
-  _fetch() async {
-    try {
-      final firebaseUser = await FirebaseAuth.instance.currentUser;
-      if (firebaseUser != null) {
-        final ds = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(firebaseUser.uid)
-            .get();
-        if (ds.exists) {
-          final solde = ds.data()!['Solde'];
-
-          if (solde != null) {
-            mySolde = double.tryParse(solde.toString()) ?? 0;
-            print(mySolde);
-          } else {
-            print('The value for the "Solde" field is null.');
-          }
-        } else {
-          print('The document does not exist.');
-        }
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
+  
 
 
   _fetch_personal_data() async {

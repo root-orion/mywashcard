@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:adobe_xd/pinned.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
+import 'package:mywashcard/recherche_group.dart';
 import 'package:mywashcard/x_dcard_pagenew1.dart';
+import 'package:mywashcard/xd_solde.dart';
 import './xd_champ_ville.dart';
 import './xd_champ_quartier.dart';
 import './xd_bouton_recherche.dart';
@@ -10,10 +13,7 @@ import './xd_details_lavage.dart';
 import 'package:adobe_xd/page_link.dart';
 import './xd_bouton_lavage.dart';
 import './xd_acceuil.dart';
-import './xd_icon_support.dart';
-import './xd_icon_profil.dart';
-import './xd_icon_card.dart';
-import './x_d.dart';
+
 import './xd_presentation.dart';
 import 'xd_profil.dart';
 
@@ -49,7 +49,7 @@ class XDResultatRecherche extends StatelessWidget {
                 Container(
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: const AssetImage(''),
+                      image: const AssetImage('assets/images/erik-mclean.jpg'),
                       fit: BoxFit.cover,
                       colorFilter: new ColorFilter.mode(
                           Colors.black.withOpacity(0.3), BlendMode.dstIn),
@@ -80,7 +80,7 @@ class XDResultatRecherche extends StatelessWidget {
                 image: DecorationImage(
                   image: const AssetImage('assets/images/Logo.png'),
                   fit: BoxFit.fill,
-                  colorFilter: new ColorFilter.mode(
+                  colorFilter: ColorFilter.mode(
                       Colors.black.withOpacity(0.2), BlendMode.dstIn),
                 ),
               ),
@@ -97,137 +97,78 @@ class XDResultatRecherche extends StatelessWidget {
                   bottomLeft: Radius.circular(25.0),
                 ),
               ),
+              child: XDSolde(),
             ),
           ),
-          Container(),
-          Pinned.fromPins(
-            Pin(start: 95.0, end: 95.0),
-            Pin(size: 34.0, start: 30.0),
-            child: Text(
-              '10 000 F CFA',
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 28,
-                color: const Color(0xffffffff),
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          Pinned.fromPins(
-            Pin(size: 42.0, middle: 0.5014),
-            Pin(size: 15.0, start: 17.0),
-            child: Text(
-              'SOLDE',
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 12,
-                color: const Color(0xffffffff),
-                fontWeight: FontWeight.w300,
-              ),
-              textAlign: TextAlign.center,
-              softWrap: false,
-            ),
-          ),
+  
+
           Pinned.fromPins(
             Pin(start: 27.0, end: 26.0),
-            Pin(size: 40.0, middle: 0.1665),
+            Pin(size: 40.0, middle: 0.165),
             child: Text(
               'Trouver un lavage',
               style: TextStyle(
                 fontFamily: 'Montserrat',
-                fontSize: 33,
+                fontSize: 33.dp,
                 color: const Color(0xffffffff),
                 fontWeight: FontWeight.w300,
               ),
               textAlign: TextAlign.center,
             ),
           ),
+       
+
           Pinned.fromPins(
-            Pin(start: 27.0, end: 26.0),
-            Pin(size: 152.0, middle: 0.2675),
-            child:
-                // Adobe XD layer: 'Recherche' (group)
-                Stack(
-              children: <Widget>[
-                Container(
-                  decoration: BoxDecoration(
-                    color: const Color(0xfffcfcfc),
-                    borderRadius: BorderRadius.circular(5.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0x29000000),
-                        offset: Offset(0, 0),
-                        blurRadius: 10,
-                      ),
-                    ],
-                  ),
-                ),
-                Pinned.fromPins(
-                  Pin(size: 195.0, start: 17.0),
-                  Pin(size: 47.0, start: 20.0),
-                  child:
-                      // Adobe XD layer: 'Champ ville' (component)
-                      XDChampVille(),
-                ),
-                Pinned.fromPins(
-                  Pin(size: 195.0, start: 17.0),
-                  Pin(size: 47.0, end: 19.0),
-                  child:
-                      // Adobe XD layer: 'Champ quartier' (component)
-                      XDChampQuartier(),
-                ),
-                Pinned.fromPins(
-                  Pin(size: 65.0, end: 17.0),
-                  Pin(start: 31.0, end: 32.0),
-                  child:
-                      // Adobe XD layer: 'Bouton recherche' (component)
-                      XDBoutonRecherche(),
-                ),
-              ],
-            ),
-          ),
-          Pinned.fromPins(
-            Pin(start: 15.0, end: 14.0),
-            Pin(size: 102.0, middle: 0.5194),
+            Pin(start: 2.w, end: 2.w),
+            Pin(size: 45.h, middle: 0.5),
             child:
                 // Adobe XD layer: 'Liste resultat' (component)
-                PageLink(
-              links: [
-                PageLinkInfo(
-                  transition: LinkTransition.Fade,
-                  ease: Curves.linear,
-                  duration: 0.3,
-                  pageBuilder: () => XDDetailsLavage(),
-                ),
-              ],
-              child: XDListeResultat(),
-            ),
+                StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection("lavages")
+                        .snapshots(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (!snapshot.hasData) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                      return ListView(
+                          children: snapshot.data!.docs.map((snap) {
+                        return Card(
+                          elevation: 10,
+                          child: ListTile(
+                            //leading: Text(snap['age'].toString()),
+                            leading: const Icon(
+                              Icons.image_outlined,
+                            ),
+                            title: Text(snap['Nom'].toString()),
+                            subtitle: Text(snap['Localisation'].toString()),
+                            trailing: Icon(Icons.favorite_border),
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=>XDDetailsLavage()));
+                            },
+                          ),
+                        );
+                      }).toList());
+                    }),
           ),
-          Pinned.fromPins(
-            Pin(start: 15.0, end: 14.0),
-            Pin(size: 102.0, middle: 0.6716),
-            child:
-                // Adobe XD layer: 'Liste resultat' (component)
-                XDListeResultat(),
-          ),
-          Pinned.fromPins(
-            Pin(start: 15.0, end: 14.0),
-            Pin(size: 102.0, middle: 0.8238),
-            child:
-                // Adobe XD layer: 'Liste resultat' (component)
-                PageLink(
-              links: [
-                PageLinkInfo(
-                  transition: LinkTransition.Fade,
-                  ease: Curves.linear,
-                  duration: 0.3,
-                  pageBuilder: () => XDDetailsLavage(),
-                ),
-              ],
-              child: XDListeResultat(),
-            ),
-          ),
-          
+          // Pinned.fromPins(
+          //   Pin(start: 15.0, end: 14.0),
+          //   Pin(size: 102.0, middle: 0.9),
+          //   child:
+          //       // Adobe XD layer: 'Liste resultat' (component)
+          //       PageLink(
+          //     links: [
+          //       PageLinkInfo(
+          //         transition: LinkTransition.Fade,
+          //         ease: Curves.linear,
+          //         duration: 0.3,
+          //         pageBuilder: () => XDDetailsLavage(),
+          //       ),
+          //     ],
+          //     child: XDListeResultat(),
+          //   ),
+          // ),
         ],
       ),
       floatingActionButton: Container(
@@ -308,6 +249,7 @@ class XDResultatRecherche extends StatelessWidget {
       ),
     );
   }
+
   _showSimpleModalDialog(context) {
     showDialog(
         context: context,
@@ -316,13 +258,13 @@ class XDResultatRecherche extends StatelessWidget {
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20.0)),
             child: Container(
-              constraints: BoxConstraints(maxHeight: 25.h, maxWidth: 65.w),
+              constraints: BoxConstraints(maxHeight: 28.h, maxWidth: 65.w),
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
+                    const Text(
                       "NOUS SOMMES OUVERT 24/24h 7/7j",
                       style: TextStyle(color: Color(0xffe1bd07)),
                     ),

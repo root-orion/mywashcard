@@ -1,9 +1,14 @@
+import 'package:cinetpay/cinetpay.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:adobe_xd/pinned.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
+import 'package:get/get.dart';
+import 'package:mywashcard/paiemwnt.dart';
 import 'package:mywashcard/xd_profil.dart';
+import 'package:mywashcard/xd_resultat_recherche.dart';
+import 'package:mywashcard/xd_solde.dart';
 import './xd_bouton_rechargement.dart';
 import './xd_bouton_lavage.dart';
 import './xd_acceuil.dart';
@@ -25,6 +30,8 @@ class XDcardPagenew1 extends StatefulWidget {
 }
 
 class _XDcardPagenew1State extends State<XDcardPagenew1> {
+   final String apikey = '138474062264281f6088c8e5.23841308';
+  final String siteId='540983';
   double mySolde = 0;
   @override
   Widget build(BuildContext context) {
@@ -87,14 +94,61 @@ class _XDcardPagenew1State extends State<XDcardPagenew1> {
                       SizedBox(
                         height: 20.0,
                       ),
-                      XDBoutonRechargement(),
+                      PageLink(
+                        links: [
+                          PageLinkInfo(
+                            transition: LinkTransition.Fade,
+                            ease: Curves.linear,
+                            duration: 0.3,
+                            pageBuilder: () => PagePaiement(),
+                          ),
+                        ],
+                        child: FlatButton(
+
+                          onPressed: () async{
+                            await Get.to(
+                              () => CinetPayCheckout(
+                          title: 'Validation du paiement',
+                          configData: <String, dynamic>{
+                            'apikey': apikey,
+                            'site_id': siteId,
+                            'notify_url': 'https://ivoireexchanger.com'
+                          },
+                          paymentData: <String, dynamic>{
+                            'transaction_id': new DateTime.now()
+                                .millisecondsSinceEpoch
+                                .toString(),
+                            'amount': 200,
+                            'currency': 'XOF',
+                            'channels': 'ALL',
+                            'description': 'Test de paiement'
+                          },
+                          waitResponse: (response) {
+                            if (mounted) {
+                           
+                            }
+                          },
+                          onError: (error) {
+                            if (mounted) {
+                              print('error');
+                              setState(() {
+                                Get.back();
+                              });
+                            }
+                          }),
+                            );
+                          },
+                          child: Text("RECHARGER MA CARTE"),
+                          color:  Color(0xffe1bd07),
+                        ),
+                        // XDBoutonRechargement(),
+                      )
                     ],
                   ),
                 ),
               ],
             ),
           ),
-
           Container(
             decoration: BoxDecoration(
               color: Color.fromARGB(255, 227, 223, 223),
@@ -112,21 +166,12 @@ class _XDcardPagenew1State extends State<XDcardPagenew1> {
                 image: DecorationImage(
                   image: const AssetImage('assets/images/Logo.png'),
                   colorFilter: ColorFilter.mode(
-                      Colors.black.withOpacity(0.2), BlendMode.dstIn),
+                      Color.fromARGB(255, 255, 255, 255).withOpacity(0.2),
+                      BlendMode.dstIn),
                 ),
               ),
-              // child: Row(
-              //   children: [
-              //      Column(
-              //        children: [
-              //          XDcarte(),
-              //        ],
-              //      ),
-              //   ],
-              // ),
             ),
           ),
-
           Pinned.fromPins(
             Pin(start: 0.0, end: 0.0),
             Pin(size: 80.0, start: 0.0),
@@ -138,66 +183,12 @@ class _XDcardPagenew1State extends State<XDcardPagenew1> {
                   bottomLeft: Radius.circular(25.0),
                 ),
               ),
+              child:XDSolde(),
             ),
           ),
           Container(),
-          Pinned.fromPins(
-            Pin(start: 5.w, end: 5.w),
-            Pin(size: 5.h, start: 6.h),
-            child: FutureBuilder(
-              future: _fetch(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState != ConnectionState.done)
-                  return Text("Chargement...", textAlign: TextAlign.center);
-                return Text(
-                  "${mySolde} FCFA",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 25.dp,
-                    color: const Color(0xffffffff),
-                  ),
-                );
-              },
-            ),
-          ),
-          Pinned.fromPins(
-            Pin(size: 45.w, middle: 0.5014),
-            Pin(size: 15.h, start: 4.h),
-            child: Text(
-              'SOLDE',
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 10.dp,
-                color: const Color(0xffffffff),
-                fontWeight: FontWeight.w300,
-              ),
-              textAlign: TextAlign.center,
-              softWrap: false,
-            ),
-          ),
-          // Pinned.fromPins(
-          //   Pin(start: 27.0, end: 26.0),
-          //   Pin(size: 40.0, start: 100.0),
-          //   child: Text(
-          //     'Mes cartes',
-          //     style: TextStyle(
-          //       fontFamily: 'Montserrat',
-          //       fontSize: 33,
-          //       color: const Color(0xffffffff),
-          //       fontWeight: FontWeight.w300,
-          //     ),
-          //     textAlign: TextAlign.center,
-          //   ),
-          // ),
-          // Pinned.fromPins(
-          //   Pin(start: 37.0, end: 36.0),
-          //   Pin(size: 62.0, middle: 0.2467),
-          //   child:
-          //       // Adobe XD layer: 'Bouton rechargement' (component)
-          //       XDBoutonRechargement(),
-          // ),
-
+    
+       
           Pinned.fromPins(
             Pin(start: 5.w, end: 5.w),
             Pin(size: 33.h, middle: 0.75),
@@ -216,7 +207,7 @@ class _XDcardPagenew1State extends State<XDcardPagenew1> {
 
             onPressed: () {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => XDAcceuil()));
+                  MaterialPageRoute(builder: (context) => XDResultatRecherche()));
             },
             child: Icon(
               Icons.location_on,
@@ -226,7 +217,7 @@ class _XDcardPagenew1State extends State<XDcardPagenew1> {
           ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: BottomAppBar(
         color: Color.fromARGB(255, 255, 255, 255),
 
@@ -258,6 +249,15 @@ class _XDcardPagenew1State extends State<XDcardPagenew1> {
                 onPressed: () {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (contet) => XDProfil()));
+                },
+              ),
+                IconButton(
+                iconSize: 30.0,
+                padding: EdgeInsets.only(right: 28.0),
+                icon: Icon(Icons.home),
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (contet) => XDAcceuil()));
                 },
               ),
               IconButton(
@@ -302,8 +302,10 @@ class _XDcardPagenew1State extends State<XDcardPagenew1> {
                   children: [
                     Text(
                       "NOUS SOMMES OUVERT 24/24h 7/7j",
-                      style: TextStyle(color: Color(0xffe1bd07),),
-                      textAlign:TextAlign.center,
+                      style: TextStyle(
+                        color: Color(0xffe1bd07),
+                      ),
+                      textAlign: TextAlign.center,
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
